@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Hangman {
-    public static void main(String[] args) {
+    public Hangman() {
         Scanner keyboard = new Scanner(System.in);
         String[] hangmanPics = {
     """
@@ -69,7 +69,7 @@ public class Hangman {
     =========
     """
 };
-        int count = 6;
+        int count = 0;
         boolean correctGuess = false;
         ArrayList<String> randomWords = new ArrayList<>();
         randomWords.add("dog");
@@ -80,7 +80,7 @@ public class Hangman {
         System.out.println(randomIndex);
         
         System.out.println("Welcome to Hangman!");
-        System.out.println(hangmanPics[6]);
+        System.out.println(hangmanPics[0]);
         String beginningString = "";
         for (int i=0; i < word.length(); i++) {
             System.out.print("_ ");
@@ -90,7 +90,7 @@ public class Hangman {
         System.out.println("Guess the Word!");
         StringBuilder stringBuilder = new StringBuilder(beginningString);
 
-        while (correctGuess != true && count >= 1) {
+        while (correctGuess != true && count < 6) {
           System.out.print("Your guess? ");
           String userGuess = keyboard.nextLine();
             if (userGuess.length() > 1 || Character.isDigit(userGuess.charAt(0))) {
@@ -113,7 +113,7 @@ public class Hangman {
                 
               }
               if (!correctLetter) {
-                  count--;
+                  count++;
               }
               if (!stringBuilder.toString().contains("_")) {
                 correctGuess = true;
@@ -125,8 +125,8 @@ public class Hangman {
         }
 
     }
-
-    public String generateWord() {
-
+    
+    public static void main(String[] args) {
+        new Hangman();
     }
 }
