@@ -1,132 +1,133 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Hangman {
-    public Hangman() {
-        Scanner keyboard = new Scanner(System.in);
-        String[] hangmanPics = {
-    """
-      +---+
-      |   |
-          |
-          |
-          |
-          |
-    =========
-    """,
-    """
-      +---+
-      |   |
-      O   |
-          |
-          |
-          |
-    =========
-    """,
-    """
-      +---+
-      |   |
-      O   |
-      |   |
-          |
-          |
-    =========
-    """,
-    """
-      +---+
-      |   |
-      O   |
-     /|   |
-          |
-          |
-    =========
-    """,
-    """
-      +---+
-      |   |
-      O   |
-     /|\\  |
-          |
-          |
-    =========
-    """,
-    """
-      +---+
-      |   |
-      O   |
-     /|\\  |
-     /    |
-          |
-    =========
-    """,
-    """
-      +---+
-      |   |
-      O   |
-     /|\\  |
-     / \\  |
-          |
-    =========
-    """
-};
-        int count = 0;
-        boolean correctGuess = false;
-        ArrayList<String> randomWords = new ArrayList<>();
-        randomWords.add("dog");
-        randomWords.add("testword");
-        randomWords.add("hamburger");
-        int randomIndex = (int)(Math.random() * randomWords.size());
-        String word = randomWords.get(randomIndex);
-        System.out.println(randomIndex);
-        
-        System.out.println("Welcome to Hangman!");
-        System.out.println(hangmanPics[0]);
-        String beginningString = "";
-        for (int i=0; i < word.length(); i++) {
-            System.out.print("_ ");
-            beginningString += "_ ";
-        }
-        System.out.println();
-        System.out.println("Guess the Word!");
-        StringBuilder stringBuilder = new StringBuilder(beginningString);
+  private int count;
+  private boolean correctGuess;
+  private ArrayList<String> randomWords;
+  private int randomIndex;
+  private String secretWord;
+  private StringBuilder stringBuilder;
+  private static final String[] hangmanPics = {
+      """
+        +---+
+        |   |
+            |
+            |
+            |
+            |
+      =========
+      """,
+      """
+        +---+
+        |   |
+        O   |
+            |
+            |
+            |
+      =========
+      """,
+      """
+        +---+
+        |   |
+        O   |
+        |   |
+            |
+            |
+      =========
+      """,
+      """
+        +---+
+        |   |
+        O   |
+      /|   |
+            |
+            |
+      =========
+      """,
+      """
+        +---+
+        |   |
+        O   |
+      /|\\  |
+            |
+            |
+      =========
+      """,
+      """
+        +---+
+        |   |
+        O   |
+      /|\\  |
+      /    |
+            |
+      =========
+      """,
+      """
+        +---+
+        |   |
+        O   |
+      /|\\  |
+      / \\  |
+            |
+      =========
+      """
+  };
 
-        while (correctGuess != true && count < 6) {
-          System.out.print("Your guess? ");
-          String userGuess = keyboard.nextLine();
-            if (userGuess.length() > 1 || Character.isDigit(userGuess.charAt(0))) {
-              System.out.println("Error");
-            } else {
-              boolean correctLetter = false;
-              for (int i=0; i < word.length(); i++) {
-                if (userGuess.equals(Character.toString(word.charAt(i)))) {
-                  if (i == word.length()-1) {
-                    stringBuilder.setCharAt(stringBuilder.toString().length() - 2, word.charAt(i));
-                  } else if (i == 0) {
-                    stringBuilder.setCharAt(0, word.charAt(i));
-                  } else if (i == 1) {
-                    stringBuilder.setCharAt(2, word.charAt(i)); 
-                  } else {
-                     stringBuilder.setCharAt(((i+1)*2)-2, word.charAt(i));
-                  }
-                  correctLetter = true;
-                } 
-                
-              }
-              if (!correctLetter) {
-                  count++;
-              }
-              if (!stringBuilder.toString().contains("_")) {
-                correctGuess = true;
-              }
-        
-            } 
-          System.out.println(hangmanPics[count]);
-          System.out.println(stringBuilder.toString());
-        }
+  public Hangman() {
+      count = 0;
+      correctGuess = false;
+      randomWords = new ArrayList<>();
+      randomWords.add("dog");
+      randomWords.add("testword");
+      randomWords.add("hamburger");
+      randomIndex = (int)(Math.random() * randomWords.size());
+      secretWord = randomWords.get(randomIndex);
+  }
 
+  public void startGame() {
+      String beginningString = "";
+      for (int i=0; i < secretWord.length(); i++) {
+          beginningString += "_ ";
+      }
+      stringBuilder = new StringBuilder(beginningString);
+
+     
+  }
+
+  public void enterGuess(String userGuess) {
+    boolean correctLetter = false;
+    for (int i=0; i < secretWord.length(); i++) {
+      if (userGuess.equals(Character.toString(secretWord.charAt(i)))) {
+        if (i == secretWord.length()-1) {
+          stringBuilder.setCharAt(stringBuilder.toString().length() - 2, secretWord.charAt(i));
+        } else if (i == 0) {
+          stringBuilder.setCharAt(0, secretWord.charAt(i));
+        } else if (i == 1) {
+          stringBuilder.setCharAt(2, secretWord.charAt(i)); 
+        } else {
+            stringBuilder.setCharAt(((i+1)*2)-2, secretWord.charAt(i));
+        }
+        correctLetter = true;
+      } 
+      
     }
-    
-    public static void main(String[] args) {
-        new Hangman();
+    if (!correctLetter) {
+        count++;
     }
+    if (!stringBuilder.toString().contains("_")) {
+      correctGuess = true;
+    }
+  }
+
+  public String getRevealedWord() {
+      return stringBuilder.toString();
+  }
+  public String displayImage() {
+      return hangmanPics[count];
+  }
+
+  public String getSecretWord() {
+    return secretWord;
+  }
+
 }
