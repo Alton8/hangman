@@ -4,6 +4,7 @@ public class Hangman {
   private int count;
   private boolean correctGuess;
   private ArrayList<String> randomWords;
+  private ArrayList<String> allGuesses;
   private int randomIndex;
   private String secretWord;
   private StringBuilder stringBuilder;
@@ -77,6 +78,7 @@ public class Hangman {
       count = 0;
       correctGuess = false;
       randomWords = new ArrayList<>();
+      allGuesses = new ArrayList<>();
       randomWords.add("dog");
       randomWords.add("testword");
       randomWords.add("hamburger");
@@ -97,7 +99,7 @@ public class Hangman {
   public void enterGuess(String userGuess) {
     boolean correctLetter = false;
     for (int i=0; i < secretWord.length(); i++) {
-      if (userGuess.equals(Character.toString(secretWord.charAt(i)))) {
+      if (userGuess.equalsIgnoreCase(Character.toString(secretWord.charAt(i)))) {
         if (i == secretWord.length()-1) {
           stringBuilder.setCharAt(stringBuilder.toString().length() - 2, secretWord.charAt(i));
         } else if (i == 0) {
@@ -111,12 +113,29 @@ public class Hangman {
       } 
       
     }
+    allGuesses.add(userGuess);
     if (!correctLetter) {
         count++;
     }
     if (!stringBuilder.toString().contains("_")) {
       correctGuess = true;
     }
+  }
+
+  public boolean isCorrectGuess() {
+    return correctGuess;
+  }
+
+  public ArrayList<String> getAllGuesses() {
+    return allGuesses;
+  }
+
+  public String getAllGuessesString() {
+    String userGuesses = "Letters Guessed: ";
+    for (String s : allGuesses) {
+      userGuesses += s + " ";
+    }
+    return userGuesses;
   }
 
   public String getRevealedWord() {

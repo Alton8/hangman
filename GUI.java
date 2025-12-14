@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 public class GUI extends JFrame implements ActionListener {
@@ -9,46 +8,54 @@ public class GUI extends JFrame implements ActionListener {
     private JButton userGuessButton;
     private DefaultTableModel dtm;
     private JLabel guessLabel;
-    private final JLabel nameLabel = new JLabel("Welcome to Hangman!");
+    private JLabel nameLabel;
     private JLabel revealedWordLabel;
     private JTextArea characterDrawing;
-    private ArrayList<String> allGuesses;
     private Hangman hangmanGame;
+    private JLabel lettersGuessedLabel;
 
     public GUI() {
         super("Hangman");
         hangmanGame = new Hangman();
         hangmanGame.startGame();
 
-        allGuesses = new ArrayList<>();
         JPanel inputPanel = new JPanel(new FlowLayout()); // Use FlowLayout for simplicity
-        JPanel gamePanel = new JPanel(new FlowLayout());
+        JPanel gamePanel = new JPanel();
+        gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close operation
-        setSize(1000, 400); // Increased window size
-        setLocationRelativeTo(null); // Center the window
         
         guessLabel = new JLabel("Enter Guess: ");
         revealedWordLabel = new JLabel(hangmanGame.getRevealedWord());
+        lettersGuessedLabel = new JLabel(hangmanGame.getAllGuessesString());
+        
         characterDrawing = new JTextArea(hangmanGame.displayImage());
+        characterDrawing.setAlignmentX(Component.CENTER_ALIGNMENT);
+        characterDrawing.setEditable(false);
+
         userGuessButton = new JButton("Guess");
         userGuessButton.setPreferredSize(new Dimension(75,40));
         userGuessButton.addActionListener(this);
         
         userGuessInput = new JTextField(1);
+        nameLabel = new JLabel("Welcome to Hangman!");
+
 
         inputPanel.add(guessLabel);
         inputPanel.add(userGuessInput);
         inputPanel.add(userGuessButton);
         
-        gamePanel.add(nameLabel, BorderLayout.NORTH);
-        gamePanel.add(characterDrawing, BorderLayout.SOUTH);
+        gamePanel.add(nameLabel);
+        gamePanel.add(characterDrawing);
         gamePanel.add(revealedWordLabel);
-        gamePanel.setPreferredSize(new Dimension(2,1000));
+        gamePanel.add(lettersGuessedLabel);
 
         add(inputPanel, BorderLayout.NORTH);
-        add(gamePanel, BorderLayout.CENTER);
 
+        add(gamePanel);
+        pack();
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close operation
+        setLocationRelativeTo(null); // Center the window
         setVisible(true);
 
     }
@@ -58,16 +65,32 @@ public class GUI extends JFrame implements ActionListener {
         if (e.getSource() == userGuessButton) {
             enterGuess();
             updateScreen();
+            if (hangmanGame.isCorrectGuess()) {
+                JOptionPane.showMessageDialog(this, "Congratulations! You won! The word was " + hangmanGame.getSecretWord() + ".", "Notification", JOptionPane.PLAIN_MESSAGE);
+                userGuessInput.setVisible(false);
+                userGuessButton.setVisible(false);
+                guessLabel.setVisible(false);
+            }
         }
     }
 
     public void enterGuess() {
+        boolean duplicateGuess = false;
         String userGuess = userGuessInput.getText().trim();
-        if (userGuess.length() > 1 || Character.isDigit(userGuess.charAt(0))) {
+        if (userGuess.length() != 1 || !Character.isLetter(userGuess.charAt(0))) {
             JOptionPane.showMessageDialog(this, "Please enter a valid letter", "Input Error", JOptionPane.WARNING_MESSAGE);
         } else {
-            hangmanGame.enterGuess(userGuess);
-            allGuesses.add(userGuess);
+            for (String guess : hangmanGame.getAllGuesses()) {
+                if (guess.equals(userGuess)) {
+                    JOptionPane.showMessageDialog(this, "You already guessed this.", "Input Error", JOptionPane.WARNING_MESSAGE);
+                    userGuessInput.setText("");
+                    duplicateGuess = true;
+                    break;
+                }
+            }
+            if (!duplicateGuess) {
+                hangmanGame.enterGuess(userGuess);
+            }
         }
     }
     
@@ -75,7 +98,9 @@ public class GUI extends JFrame implements ActionListener {
         revealedWordLabel.setText(hangmanGame.getRevealedWord());
         userGuessInput.setText("");
         characterDrawing.setText(hangmanGame.displayImage());
+        lettersGuessedLabel.setText(hangmanGame.getAllGuessesString());
     }
+
     public static void main(String[] args) {
         new GUI();
     }
