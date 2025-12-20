@@ -13,6 +13,8 @@ public class GUI extends JFrame implements ActionListener {
     private JTextArea characterDrawing;
     private Hangman hangmanGame;
     private JLabel lettersGuessedLabel;
+    private JButton retryButton;
+    private JButton solveButton;
 
     public GUI() {
         super("Hangman");
@@ -32,10 +34,19 @@ public class GUI extends JFrame implements ActionListener {
         characterDrawing.setAlignmentX(Component.CENTER_ALIGNMENT);
         characterDrawing.setEditable(false);
 
+        solveButton = new JButton("Guess Full Word");
+        solveButton.setPreferredSize(new Dimension(150,40));
+        solveButton.addActionListener(this);
+
         userGuessButton = new JButton("Guess");
-        userGuessButton.setPreferredSize(new Dimension(75,40));
+        userGuessButton.setPreferredSize(new Dimension(75,30));
         userGuessButton.addActionListener(this);
         
+        retryButton = new JButton("Retry");
+        retryButton.setPreferredSize(new Dimension(75,40));
+        retryButton.addActionListener(this);
+        retryButton.setVisible(false);
+
         userGuessInput = new JTextField(1);
         nameLabel = new JLabel("Welcome to Hangman!");
 
@@ -43,12 +54,12 @@ public class GUI extends JFrame implements ActionListener {
         inputPanel.add(guessLabel);
         inputPanel.add(userGuessInput);
         inputPanel.add(userGuessButton);
-        
+        inputPanel.add(solveButton);
         gamePanel.add(nameLabel);
         gamePanel.add(characterDrawing);
         gamePanel.add(revealedWordLabel);
         gamePanel.add(lettersGuessedLabel);
-
+        gamePanel.add(retryButton);
         add(inputPanel, BorderLayout.NORTH);
 
         add(gamePanel);
@@ -66,11 +77,16 @@ public class GUI extends JFrame implements ActionListener {
             enterGuess();
             updateScreen();
             if (hangmanGame.isCorrectGuess()) {
+                endGame();
                 JOptionPane.showMessageDialog(this, "Congratulations! You won! The word was " + hangmanGame.getSecretWord() + ".", "Notification", JOptionPane.PLAIN_MESSAGE);
-                userGuessInput.setVisible(false);
-                userGuessButton.setVisible(false);
-                guessLabel.setVisible(false);
+            } else if (hangmanGame.getCount() == 6 && !hangmanGame.isCorrectGuess()) {
+                endGame();
+                JOptionPane.showMessageDialog(this, "You lost! The word was " + hangmanGame.getSecretWord() + ".", "Notification", JOptionPane.PLAIN_MESSAGE);
             }
+        } else if (e.getSource() == retryButton) {
+            restartGame();
+        } else if (e.getSource() == solveButton) {
+            solve();
         }
     }
 
@@ -81,7 +97,7 @@ public class GUI extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, "Please enter a valid letter", "Input Error", JOptionPane.WARNING_MESSAGE);
         } else {
             for (String guess : hangmanGame.getAllGuesses()) {
-                if (guess.equals(userGuess)) {
+                if (guess.equalsIgnoreCase(userGuess)) {
                     JOptionPane.showMessageDialog(this, "You already guessed this.", "Input Error", JOptionPane.WARNING_MESSAGE);
                     userGuessInput.setText("");
                     duplicateGuess = true;
@@ -94,6 +110,37 @@ public class GUI extends JFrame implements ActionListener {
         }
     }
     
+    public void solve() {
+        String userGuess = JOptionPane.showInputDialog("What is the word?");
+        if (userGuess.equalsIgnoreCase(hangmanGame.getSecretWord())) {
+            endGame();
+            revealedWordLabel.setText(hangmanGame.getSecretWord());
+            JOptionPane.showMessageDialog(this, "Congratulations! You won! The word was " + hangmanGame.getSecretWord() + ".", "Notification", JOptionPane.PLAIN_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Wrong. Keep playing!", "Notification", JOptionPane.PLAIN_MESSAGE);
+            hangmanGame.increaseCount();
+            updateScreen();
+        }
+    }
+    public void endGame() {
+        userGuessInput.setVisible(false);
+        userGuessButton.setVisible(false);
+        guessLabel.setVisible(false);
+        retryButton.setVisible(true);
+        solveButton.setVisible(false);
+    }
+
+    public void restartGame() {
+        hangmanGame = new Hangman();
+        hangmanGame.startGame();
+        userGuessInput.setVisible(true);
+        lettersGuessedLabel.setText(hangmanGame.getAllGuessesString());
+        characterDrawing.setText(hangmanGame.displayImage());
+        revealedWordLabel.setText(hangmanGame.getRevealedWord());
+        userGuessButton.setVisible(true);
+        guessLabel.setVisible(true);
+        retryButton.setVisible(false);
+    }
     public void updateScreen() {
         revealedWordLabel.setText(hangmanGame.getRevealedWord());
         userGuessInput.setText("");

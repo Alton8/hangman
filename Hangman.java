@@ -137,7 +137,12 @@ public class Hangman {
     }
     return userGuesses;
   }
-
+  public void increaseCount() {
+    count++;
+  }
+  public int getCount() {
+    return count;
+  }
   public String getRevealedWord() {
       return stringBuilder.toString();
   }
