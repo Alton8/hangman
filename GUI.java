@@ -1,16 +1,18 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 public class GUI extends JFrame implements ActionListener {
     
     private JTextField userGuessInput;
     private JButton userGuessButton;
-    private DefaultTableModel dtm;
     private JLabel guessLabel;
     private JLabel nameLabel;
     private JLabel revealedWordLabel;
-    private JTextArea characterDrawing;
+    private JTextPane characterDrawing;
     private Hangman hangmanGame;
     private JLabel lettersGuessedLabel;
     private JButton retryButton;
@@ -30,10 +32,17 @@ public class GUI extends JFrame implements ActionListener {
         revealedWordLabel = new JLabel(hangmanGame.getRevealedWord());
         lettersGuessedLabel = new JLabel(hangmanGame.getAllGuessesString());
         
-        characterDrawing = new JTextArea(hangmanGame.displayImage());
-        characterDrawing.setAlignmentX(Component.CENTER_ALIGNMENT);
+        characterDrawing = new JTextPane();
         characterDrawing.setEditable(false);
 
+        StyledDocument doc = characterDrawing.getStyledDocument();
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+        doc.setParagraphAttributes(0, doc.getLength(), center, false);
+
+        characterDrawing.setText(hangmanGame.displayImage());
+        characterDrawing.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
         solveButton = new JButton("Guess Full Word");
         solveButton.setPreferredSize(new Dimension(150,40));
         solveButton.addActionListener(this);
@@ -50,6 +59,11 @@ public class GUI extends JFrame implements ActionListener {
         userGuessInput = new JTextField(1);
         nameLabel = new JLabel("Welcome to Hangman!");
 
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        characterDrawing.setAlignmentX(Component.CENTER_ALIGNMENT);
+        revealedWordLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lettersGuessedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        retryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         inputPanel.add(guessLabel);
         inputPanel.add(userGuessInput);
@@ -138,6 +152,7 @@ public class GUI extends JFrame implements ActionListener {
         characterDrawing.setText(hangmanGame.displayImage());
         revealedWordLabel.setText(hangmanGame.getRevealedWord());
         userGuessButton.setVisible(true);
+        solveButton.setVisible(true);
         guessLabel.setVisible(true);
         retryButton.setVisible(false);
     }
