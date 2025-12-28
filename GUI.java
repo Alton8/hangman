@@ -17,6 +17,7 @@ public class GUI extends JFrame implements ActionListener {
     private JLabel lettersGuessedLabel;
     private JButton retryButton;
     private JButton solveButton;
+    private JButton hintButton;
 
     public GUI() {
         super("Hangman");
@@ -56,6 +57,10 @@ public class GUI extends JFrame implements ActionListener {
         retryButton.addActionListener(this);
         retryButton.setVisible(false);
 
+        hintButton = new JButton("Hint");
+        hintButton.setPreferredSize(new Dimension(150,40));
+        hintButton.addActionListener(this);
+        
         userGuessInput = new JTextField(1);
         nameLabel = new JLabel("Welcome to Hangman!");
 
@@ -69,6 +74,7 @@ public class GUI extends JFrame implements ActionListener {
         inputPanel.add(userGuessInput);
         inputPanel.add(userGuessButton);
         inputPanel.add(solveButton);
+        inputPanel.add(hintButton);
         gamePanel.add(nameLabel);
         gamePanel.add(characterDrawing);
         gamePanel.add(revealedWordLabel);
@@ -101,6 +107,8 @@ public class GUI extends JFrame implements ActionListener {
             restartGame();
         } else if (e.getSource() == solveButton) {
             solve();
+        } else if (e.getSource() == hintButton) {
+            JOptionPane.showMessageDialog(this, hangmanGame.getHint(), "Hint", JOptionPane.PLAIN_MESSAGE);
         }
     }
 
@@ -142,6 +150,7 @@ public class GUI extends JFrame implements ActionListener {
         guessLabel.setVisible(false);
         retryButton.setVisible(true);
         solveButton.setVisible(false);
+        hintButton.setVisible(false);
     }
 
     public void restartGame() {
@@ -154,6 +163,7 @@ public class GUI extends JFrame implements ActionListener {
         userGuessButton.setVisible(true);
         solveButton.setVisible(true);
         guessLabel.setVisible(true);
+        hintButton.setVisible(true);
         retryButton.setVisible(false);
     }
     public void updateScreen() {
