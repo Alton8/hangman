@@ -1,7 +1,8 @@
 import java.util.*;
 
 public class Hangman {
-  private int count;
+  private int imageIndex;
+  private int guessCount = 0;
   private boolean correctGuess;
   Map<String, String> hints = new HashMap<>();
   private ArrayList<String> allGuesses;
@@ -74,7 +75,8 @@ public class Hangman {
   };
 
   public Hangman() {
-      count = 0;
+      imageIndex = 0;
+      guessCount = 0;
       correctGuess = false;
       allGuesses = new ArrayList<>();
 
@@ -144,8 +146,10 @@ public class Hangman {
     }
     allGuesses.add(userGuess);
     if (!correctLetter) {
-        count++;
+        imageIndex++;
     }
+    guessCount++;
+    //Check if all of the underscores have been filled
     if (!stringBuilder.toString().contains("_")) {
       correctGuess = true;
     }
@@ -155,10 +159,11 @@ public class Hangman {
     return correctGuess;
   }
 
+  //Various getters
+
   public ArrayList<String> getAllGuesses() {
     return allGuesses;
   }
-
   public String getAllGuessesString() {
     String userGuesses = "Letters Guessed: ";
     for (String s : allGuesses) {
@@ -166,17 +171,17 @@ public class Hangman {
     }
     return userGuesses;
   }
-  public void increaseCount() {
-    count++;
+  public int getImageIndex() {
+    return imageIndex;
   }
-  public int getCount() {
-    return count;
+  public int getGuessCount() {
+    return guessCount;
   }
   public String getRevealedWord() {
       return stringBuilder.toString();
   }
   public String displayImage() {
-      return hangmanPics[count];
+      return hangmanPics[imageIndex];
   }
   public String getHint() {
     return hints.get(secretWord);
