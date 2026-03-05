@@ -13,3 +13,4 @@ The game randomly selects a word with a corresponding hint, tracks letter guesse
 - Tracks all previously guessed letters
 - Retry button to restart the game after win or loss
 
+<img width="2879" height="1714" alt="Image" src="https://github.com/user-attachments/assets/4b2d92fb-19a4-48bc-895f-aba4e24ff449" />
